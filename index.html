@@ -1,491 +1,562 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Based on You</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f4ee">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Katch">
+  <title>Katch — Discover the hidden</title>
 
   <style>
-    * {
-      box-sizing: border-box;
+    :root {
+      --background: #f7f4ee;
+      --card: #fffdf9;
+      --text: #151311;
+      --secondary: #766f67;
+      --line: rgba(29, 24, 19, 0.09);
+      --shadow: 0 14px 36px rgba(42, 34, 25, 0.09);
+      --header-height: 126px;
+      --nav-height: 71px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
 
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
     body {
       margin: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       overflow: hidden;
+      background: var(--background);
+      color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-      background: #f5f4f0;
-      color: #151515;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
     }
 
     .app {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
+      position: fixed;
+      inset: 0;
+      background: var(--background);
       overflow: hidden;
     }
 
-    .topbar {
-      height: 116px;
-      flex: 0 0 auto;
-      background: rgba(255,255,255,0.92);
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(0,0,0,0.06);
+    /* Header */
+
+    .header {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
       z-index: 20;
+      height: calc(var(--header-height) + var(--safe-top));
+      padding: calc(17px + var(--safe-top)) 18px 12px;
+      background: rgba(247, 244, 238, 0.95);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--line);
     }
 
-    .topbar-inner {
-      padding: 24px 34px 18px;
+    .brand-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      gap: 26px;
+      align-items: flex-start;
+      gap: 14px;
     }
 
     .brand h1 {
       margin: 0;
-      font-size: 36px;
-      letter-spacing: -1.1px;
-      font-weight: 850;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 40px;
+      font-weight: 500;
+      letter-spacing: -1.8px;
+      line-height: 0.95;
     }
 
     .brand p {
-      margin: 6px 0 0;
-      color: #777;
-      font-size: 14px;
+      margin: 7px 0 0;
+      color: var(--secondary);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.19em;
+      text-transform: uppercase;
     }
 
-    .search {
-      flex: 1;
-      max-width: 560px;
-      background: #f0f0ed;
-      border-radius: 999px;
-      padding: 14px 18px;
-      color: #858585;
-      font-size: 14px;
-    }
-
-    .profile {
-      width: 43px;
-      height: 43px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1c1c1c, #aaa);
-      flex: 0 0 auto;
-    }
-
-    .board-wrapper {
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .horizontal-board {
-      height: 100%;
+    .header-buttons {
       display: flex;
-      gap: 18px;
+      gap: 8px;
+      padding-top: 2px;
+    }
+
+    .round-btn {
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: rgba(255, 253, 249, 0.9);
+      color: var(--text);
+      font-size: 18px;
+    }
+
+    .browse-row {
+      margin-top: 21px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--secondary);
+      font-size: 12px;
+    }
+
+    .browse-row strong {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .position {
+      min-width: 68px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--card);
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+    }
+
+    /* Horizontal category board */
+
+    .category-board {
+      position: absolute;
+      top: calc(var(--header-height) + var(--safe-top));
+      bottom: calc(var(--nav-height) + var(--safe-bottom));
+      left: 0;
+      right: 0;
+      display: flex;
+      gap: 14px;
       overflow-x: auto;
       overflow-y: hidden;
-      padding: 24px 34px 34px;
-      scroll-behavior: smooth;
-      scroll-snap-type: x proximity;
+      padding: 16px 14px 14px;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
     }
 
-    .horizontal-board::-webkit-scrollbar {
-      height: 9px;
+    .category-board::-webkit-scrollbar,
+    .card-list::-webkit-scrollbar,
+    .slides::-webkit-scrollbar,
+    .detail-gallery::-webkit-scrollbar,
+    .screenshots::-webkit-scrollbar {
+      display: none;
     }
 
-    .horizontal-board::-webkit-scrollbar-track {
-      background: rgba(0,0,0,0.04);
-      border-radius: 999px;
-      margin: 0 34px;
-    }
-
-    .horizontal-board::-webkit-scrollbar-thumb {
-      background: rgba(0,0,0,0.18);
-      border-radius: 999px;
-    }
-
-    .category-column {
-      width: calc((100vw - 68px - 54px) / 4);
-      min-width: calc((100vw - 68px - 54px) / 4);
-      max-width: 360px;
+    .category-lane {
+      flex: 0 0 calc(100vw - 49px);
       height: 100%;
-      overflow: hidden;
-      scroll-snap-align: start;
       display: flex;
       flex-direction: column;
+      scroll-snap-align: start;
     }
 
-    .column-header {
+    .lane-title {
       flex: 0 0 auto;
-      position: sticky;
-      top: 0;
-      z-index: 3;
-      padding: 2px 0 14px;
-      background: linear-gradient(to bottom, #f5f4f0 72%, rgba(245,244,240,0));
+      padding: 0 5px 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
     }
 
-    .column-kicker {
-      color: #8a8a8a;
-      font-size: 11px;
-      font-weight: 760;
-      text-transform: uppercase;
-      letter-spacing: 0.85px;
-      margin-bottom: 6px;
-    }
-
-    .column-title {
+    .lane-title h2 {
       margin: 0;
-      font-size: 25px;
-      letter-spacing: -0.7px;
-      font-weight: 860;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      letter-spacing: -1px;
+      font-weight: 500;
     }
 
-    .column-feed {
+    .lane-title span {
+      color: var(--secondary);
+      font-size: 11px;
+      letter-spacing: 0.16em;
+    }
+
+    .card-list {
       flex: 1;
       overflow-y: auto;
-      padding-right: 4px;
+      padding: 0 2px 28px;
+      scrollbar-width: none;
+      overscroll-behavior-y: contain;
     }
 
-    .column-feed::-webkit-scrollbar {
-      width: 0;
-      display: none;
-    }
+    /* Recommendation cards */
 
     .card {
-      background: white;
-      border-radius: 28px;
+      margin-bottom: 15px;
       overflow: hidden;
-      margin-bottom: 18px;
-      box-shadow: 0 8px 26px rgba(0,0,0,0.07);
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      border: 1px solid rgba(32, 26, 19, 0.04);
+      border-radius: 25px;
+      background: var(--card);
+      box-shadow: var(--shadow);
     }
 
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 14px 36px rgba(0,0,0,0.11);
+    .media {
+      position: relative;
+      background: #ece7df;
     }
 
-    .visual-carousel {
+    .slides {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      cursor: grab;
-      background: #eee;
+      scrollbar-width: none;
+      overscroll-behavior-x: contain;
     }
 
-    .visual-carousel::-webkit-scrollbar {
-      display: none;
-    }
-
-    .visual-slide {
+    .slide {
       flex: 0 0 100%;
       scroll-snap-align: start;
-      position: relative;
     }
 
-    .visual-slide img {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
+    .slide img {
       display: block;
+      width: 100%;
+      height: 357px;
+      object-fit: cover;
     }
 
-    .card.tall .visual-slide img {
-      height: 390px;
+    .card.secondary .slide img {
+      height: 262px;
     }
 
-    .card.small .visual-slide img {
-      height: 230px;
-    }
-
-    .image-counter {
+    .image-arrow {
       position: absolute;
-      right: 12px;
-      bottom: 12px;
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(10px);
-      border-radius: 999px;
-      padding: 6px 9px;
-      font-size: 10px;
-      font-weight: 800;
-      color: #222;
-    }
-
-    .card-content {
-      padding: 14px 15px 16px;
-      cursor: pointer;
-    }
-
-    .tag {
-      display: inline-block;
-      background: #f4f4f1;
-      color: #6f6f6f;
-      border-radius: 999px;
-      padding: 6px 9px;
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 9px;
-    }
-
-    .card-title {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.12;
-      letter-spacing: -0.35px;
-      font-weight: 850;
-    }
-
-    .card-text {
-      margin: 8px 0 0;
-      color: #666;
-      font-size: 13px;
-      line-height: 1.42;
-    }
-
-    .hint {
-      margin-top: 11px;
-      color: #8a8a8a;
-      font-size: 11px;
-    }
-
-    .nav-arrow {
-      position: fixed;
       top: 50%;
+      z-index: 3;
+      width: 31px;
+      height: 31px;
       transform: translateY(-50%);
-      z-index: 30;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.16);
-      backdrop-filter: blur(10px);
-      cursor: pointer;
-      font-size: 22px;
-      transition: transform 0.18s ease, background 0.18s ease;
-    }
-
-    .nav-arrow:hover {
-      transform: translateY(-50%) scale(1.06);
-      background: white;
-    }
-
-    .nav-left {
-      left: 20px;
-    }
-
-    .nav-right {
-      right: 20px;
-    }
-
-    .position-indicator {
-      position: fixed;
-      right: 34px;
-      bottom: 24px;
-      z-index: 30;
-      background: rgba(255,255,255,0.88);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 999px;
-      padding: 9px 13px;
-      font-size: 12px;
-      color: #555;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.09);
-    }
-
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.48);
-      backdrop-filter: blur(8px);
-      z-index: 100;
-      justify-content: center;
-      align-items: center;
-      padding: 34px;
-    }
-
-    .modal {
-      width: min(1120px, 94vw);
-      max-height: 90vh;
-      background: #fff;
-      border-radius: 34px;
-      overflow: hidden;
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      box-shadow: 0 30px 90px rgba(0,0,0,0.28);
-      position: relative;
+      place-items: center;
+      border: 0;
+      border-radius: 50%;
+      background: rgba(255, 253, 249, 0.86);
+      box-shadow: 0 3px 14px rgba(0, 0, 0, 0.12);
+      font-size: 20px;
+      color: var(--text);
     }
 
-    .modal-left {
-      min-height: 640px;
-      background: #f5f5f2;
+    .image-arrow.left {
+      left: 10px;
     }
 
-    .modal-carousel {
-      height: 100%;
+    .image-arrow.right {
+      right: 10px;
+    }
+
+    .pagination {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 5px;
+      padding: 7px 9px;
+      border-radius: 999px;
+      background: rgba(255, 253, 249, 0.84);
+      backdrop-filter: blur(8px);
+    }
+
+    .pagination span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(21, 19, 17, 0.25);
+    }
+
+    .pagination span.current {
+      background: var(--text);
+    }
+
+    .card-info {
+      padding: 14px 14px 15px;
+    }
+
+    .label {
+      margin-bottom: 7px;
+      color: var(--secondary);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .card-info h3 {
+      margin: 0 0 7px;
+      font-size: 19px;
+      line-height: 1.15;
+      font-weight: 650;
+      letter-spacing: -0.35px;
+    }
+
+    .card-info p {
+      margin: 0 0 13px;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--secondary);
+    }
+
+    .details-link {
+      border: 0;
+      background: none;
+      color: var(--text);
+      padding: 0;
+      font-size: 12px;
+      font-weight: 650;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* Bottom navigation */
+
+    .nav {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      height: calc(var(--nav-height) + var(--safe-bottom));
+      padding-bottom: var(--safe-bottom);
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      border-top: 1px solid var(--line);
+      background: rgba(247, 244, 238, 0.97);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-button {
+      width: 72px;
+      border: 0;
+      background: none;
+      color: var(--secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-button .icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .nav-button .caption {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .nav-button.active {
+      color: var(--text);
+    }
+
+    /* Detail bottom sheet */
+
+    .overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      align-items: flex-end;
+      background: rgba(19, 16, 13, 0.44);
+      backdrop-filter: blur(5px);
+    }
+
+    .overlay.visible {
+      display: flex;
+    }
+
+    .detail-sheet {
+      max-height: 93%;
+      width: 100%;
+      overflow-y: auto;
+      background: var(--card);
+      border-radius: 31px 31px 0 0;
+      padding: 0 0 calc(24px + var(--safe-bottom));
+      scrollbar-width: none;
+      animation: up 0.22s ease-out;
+    }
+
+    @keyframes up {
+      from {
+        opacity: 0.35;
+        transform: translateY(56px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .handle {
+      width: 44px;
+      height: 5px;
+      margin: 11px auto 13px;
+      border-radius: 999px;
+      background: #d7d1c9;
+    }
+
+    .detail-gallery {
+      margin: 0 14px;
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
+      border-radius: 24px;
+      scrollbar-width: none;
     }
 
-    .modal-carousel::-webkit-scrollbar {
-      display: none;
-    }
-
-    .modal-carousel img {
+    .detail-gallery img {
       flex: 0 0 100%;
       width: 100%;
-      min-height: 640px;
+      height: 326px;
       object-fit: cover;
       scroll-snap-align: start;
     }
 
-    .modal-content {
-      padding: 36px;
-      overflow-y: auto;
+    .detail-copy {
+      padding: 18px 18px 0;
     }
 
-    .close-btn {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      border: none;
-      background: rgba(245,245,245,0.94);
-      cursor: pointer;
-      font-size: 22px;
-      z-index: 5;
+    .category-pill {
+      display: inline-block;
+      margin-bottom: 11px;
+      padding: 7px 10px;
+      background: #f2efe9;
+      border-radius: 999px;
+      color: var(--secondary);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
     }
 
-    .modal-title {
-      font-size: 36px;
+    .detail-copy h3 {
+      margin: 0 0 9px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 31px;
       line-height: 1;
-      letter-spacing: -1px;
-      font-weight: 850;
-      margin: 0 0 14px;
+      font-weight: 500;
+      letter-spacing: -0.9px;
     }
 
-    .modal-description {
-      color: #555;
-      font-size: 15px;
-      line-height: 1.55;
-      margin-bottom: 18px;
-    }
-
-    .info-box {
-      background: #f7f7f5;
-      border-radius: 20px;
-      padding: 16px;
-      margin-bottom: 14px;
-      color: #555;
+    .detail-description {
+      margin: 0 0 16px;
+      color: var(--secondary);
       font-size: 14px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    .info-box strong {
-      display: block;
-      color: #171717;
-      margin-bottom: 6px;
-    }
-
-    .screenshot-title {
-      font-size: 20px;
-      font-weight: 850;
-      margin: 24px 0 12px;
-      letter-spacing: -0.3px;
-    }
-
-    .screenshot-row {
-      display: flex;
-      gap: 12px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-    }
-
-    .screenshot-row::-webkit-scrollbar {
-      display: none;
-    }
-
-    .screenshot-card {
-      flex: 0 0 178px;
-      overflow: hidden;
+    .detail-box {
+      margin-bottom: 11px;
+      padding: 14px;
+      background: #f5f2ec;
       border-radius: 18px;
-      background: #fafafa;
-      border: 1px solid #eeeeec;
-    }
-
-    .screenshot-card img {
-      width: 100%;
-      height: 230px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .screenshot-card div {
-      padding: 10px;
-      font-size: 12px;
-      color: #555;
-      line-height: 1.35;
-    }
-
-    .empty-screenshots {
-      background: #f7f7f5;
-      border-radius: 18px;
-      padding: 16px;
-      color: #666;
+      color: #625b53;
       font-size: 13px;
       line-height: 1.45;
     }
 
-    @media (min-width: 1500px) {
-      .category-column {
-        width: calc((100vw - 68px - 126px) / 8);
-        min-width: calc((100vw - 68px - 126px) / 8);
-      }
-
-      .visual-slide img {
-        height: 255px;
-      }
-
-      .card.tall .visual-slide img {
-        height: 330px;
-      }
-
-      .card.small .visual-slide img {
-        height: 205px;
-      }
+    .detail-box strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--text);
+      font-size: 13px;
     }
 
-    @media (min-width: 1900px) {
-      .category-column {
-        width: calc((100vw - 68px - 162px) / 10);
-        min-width: calc((100vw - 68px - 162px) / 10);
-      }
+    .source-title {
+      margin: 23px 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: -0.4px;
     }
 
-    @media (max-width: 1100px) {
-      .category-column {
-        width: calc((100vw - 68px - 18px) / 2);
-        min-width: calc((100vw - 68px - 18px) / 2);
+    .screenshots {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .screenshot {
+      flex: 0 0 238px;
+      margin: 0;
+      overflow: hidden;
+      background: #f5f2ec;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+    }
+
+    .screenshot img {
+      display: block;
+      width: 100%;
+      height: 130px;
+      object-fit: cover;
+    }
+
+    .screenshot figcaption {
+      margin: 0;
+      padding: 9px 11px;
+      color: var(--secondary);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .close {
+      width: calc(100% - 36px);
+      margin: 23px 18px 0;
+      padding: 15px;
+      border: 0;
+      border-radius: 999px;
+      background: var(--text);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    /* Laptop preview: shows the phone app inside a device frame */
+
+    @media (min-width: 600px) {
+      body {
+        display: grid;
+        place-items: center;
+        background: #e4dfd7;
       }
 
-      .modal {
-        grid-template-columns: 1fr;
-        overflow-y: auto;
+      .app {
+        position: relative;
+        width: 430px;
+        height: min(930px, calc(100vh - 34px));
+        border-radius: 38px;
+        border: 9px solid #171512;
+        box-shadow: 0 30px 90px rgba(25, 20, 16, 0.2);
       }
 
-      .modal-left,
-      .modal-carousel img {
-        min-height: 360px;
+      .category-lane {
+        flex-basis: 365px;
       }
     }
   </style>
@@ -493,672 +564,545 @@
 
 <body>
   <div class="app">
-
-    <header class="topbar">
-      <div class="topbar-inner">
+    <header class="header">
+      <div class="brand-row">
         <div class="brand">
           <h1>Katch</h1>
-          <p>News of you for you. Get to know yourself. Discover the hidden.</p>
+          <p>Discover the hidden</p>
         </div>
 
-        <div class="search">Search ideas, products, moods...</div>
-        <div class="profile"></div>
+        <div class="header-buttons">
+          <button class="round-btn" aria-label="Search">⌕</button>
+          <button class="round-btn" aria-label="Profile">◌</button>
+        </div>
+      </div>
+
+      <div class="browse-row">
+        <strong>Explore by category</strong>
+        <span id="position" class="position">01 / 12</span>
       </div>
     </header>
 
-    <div class="board-wrapper">
-      <button class="nav-arrow nav-left" onclick="scrollBoard(-1)">‹</button>
-      <button class="nav-arrow nav-right" onclick="scrollBoard(1)">›</button>
+    <main id="board" class="category-board" aria-label="Recommendations by category"></main>
 
-      <main class="horizontal-board" id="board"></main>
+    <nav class="nav" aria-label="Primary navigation">
+      <button class="nav-button active">
+        <span class="icon">⌂</span>
+        <span class="caption">Discover</span>
+      </button>
+      <button class="nav-button">
+        <span class="icon">♡</span>
+        <span class="caption">Saved</span>
+      </button>
+      <button class="nav-button">
+        <span class="icon">＋</span>
+        <span class="caption">Upload</span>
+      </button>
+      <button class="nav-button">
+        <span class="icon">◌</span>
+        <span class="caption">Profile</span>
+      </button>
+    </nav>
 
-      <div class="position-indicator" id="positionIndicator">Columns 1–4</div>
-    </div>
+    <div id="overlay" class="overlay" onclick="closeFromBackdrop(event)">
+      <section class="detail-sheet" aria-label="Recommendation detail">
+        <div class="handle"></div>
 
-  </div>
+        <div id="detailGallery" class="detail-gallery"></div>
 
-  <div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
-    <div class="modal">
-      <button class="close-btn" onclick="closeModal()">×</button>
+        <div class="detail-copy">
+          <div id="detailCategory" class="category-pill"></div>
+          <h3 id="detailTitle"></h3>
+          <p id="detailDescription" class="detail-description"></p>
 
-      <div class="modal-left">
-        <div class="modal-carousel" id="modalCarousel"></div>
-      </div>
+          <div class="detail-box">
+            <strong>Why this recommendation?</strong>
+            <span id="detailReason"></span>
+          </div>
 
-      <div class="modal-content">
-        <div id="modalCategory" class="tag"></div>
-        <h3 id="modalTitle" class="modal-title"></h3>
-        <div id="modalDescription" class="modal-description"></div>
+          <div class="detail-box">
+            <strong>Product information</strong>
+            <span id="detailInfo"></span>
+          </div>
 
-        <div class="info-box">
-          <strong>Why this recommendation?</strong>
-          <span id="modalReason"></span>
+          <h4 class="source-title">Based on these screenshots</h4>
+          <div id="screenshots" class="screenshots"></div>
         </div>
 
-        <div class="info-box">
-          <strong>Product information</strong>
-          <span id="modalProductInfo"></span>
-        </div>
-
-        <div class="screenshot-title">Based on these screenshots</div>
-        <div class="screenshot-row" id="screenshotRow"></div>
-      </div>
+        <button class="close" onclick="closeDetail()">Close</button>
+      </section>
     </div>
   </div>
 
   <script>
-    const uploadedScreenshots = [];
+    /*
+      Replace these links with screenshots uploaded by the user.
+      The images must be hosted online, for example in your GitHub repository.
 
-    const columns = [
+      Example:
+      src: "https://raw.githubusercontent.com/YOUR-USERNAME/YOUR-REPOSITORY/main/screenshot_1.png"
+    */
+    const uploadedScreenshots = [
       {
-        category: "Books",
-        kicker: "",
-        items: [
+        src: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900",
+        label: "Uploaded screenshot 01"
+      },
+      {
+        src: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=900",
+        label: "Uploaded screenshot 02"
+      }
+    ];
+
+    const categories = [
+      {
+        title: "Books",
+        products: [
           {
-            title: "Curated book stack",
-            description: "Editorial books and warm reading-room inspiration.",
-            productInfo: "Suggested angle: art books, fashion books, architecture books, independent magazines and collectible editions.",
+            title: "Collected volumes",
+            description: "Art editions and literary objects for a considered shelf.",
+            info: "Art books, rare editions and independent magazines.",
             images: [
-              "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1100",
-              "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1100",
-              "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=1100",
-              "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=1100"
+              "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900",
+              "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=900",
+              "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=900"
             ]
           },
           {
-            title: "Independent bookstore",
-            description: "A discovery-led reading recommendation with a bookstore atmosphere.",
-            productInfo: "Suggested angle: literary fiction, design magazines, collectible editions and cultural newsletters.",
+            title: "Reading corner",
+            description: "Warm rooms designed around books and quiet light.",
+            info: "Shelving, reading chairs and library atmospheres.",
             images: [
-              "https://images.unsplash.com/photo-1526243741027-444d633d7365?w=1100",
-              "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=1100",
-              "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1100"
-            ]
-          },
-          {
-            title: "Quiet reading corner",
-            description: "Soft light, paper textures and a personal library mood.",
-            productInfo: "Suggested angle: reading chairs, bookshelves, desk lamps and literary inspiration.",
-            images: [
-              "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=1100",
-              "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1100",
-              "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=1100"
+              "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900",
+              "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=900",
+              "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Arts",
-        kicker: "",
-        items: [
+        title: "Arts",
+        products: [
           {
-            title: "Gallery color mood",
-            description: "Contemporary art, color studies and gallery references.",
-            productInfo: "Suggested angle: paintings, prints, gallery exhibitions, color palettes and emerging artists.",
+            title: "Gallery palette",
+            description: "Color, composition and painterly surfaces.",
+            info: "Contemporary prints, gallery references and artists.",
             images: [
-              "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=1100",
-              "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=1100",
-              "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=1100"
+              "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900",
+              "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900",
+              "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=900"
             ]
           },
           {
-            title: "Abstract gestures",
-            description: "Painterly references, expressive textures and abstract compositions.",
-            productInfo: "Suggested angle: abstract prints, contemporary canvases, art posters and gallery inspiration.",
+            title: "Studio gestures",
+            description: "Material texture and imperfect creative details.",
+            info: "Artist studios, tools and material research.",
             images: [
-              "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=1100",
-              "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1100",
-              "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=1100"
-            ]
-          },
-          {
-            title: "Studio textures",
-            description: "Paint, surfaces and art-studio details.",
-            productInfo: "Suggested angle: artist studios, painting tools, color palettes and material research.",
-            images: [
-              "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=1100",
-              "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=1100",
-              "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=1100"
+              "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=900",
+              "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900",
+              "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Jeans",
-        kicker: "",
-        items: [
+        title: "Denim",
+        products: [
           {
-            title: "Vintage denim fit",
-            description: "Timeless washes, relaxed cuts and easy styling.",
-            productInfo: "Suggested angle: straight-leg jeans, wide-leg jeans, vintage blue washes, raw denim and everyday styling.",
+            title: "Vintage wash",
+            description: "Relaxed shapes in timeless indigo tones.",
+            info: "Straight-leg jeans, washes and vintage fits.",
             images: [
-              "https://images.unsplash.com/photo-1542272604-787c3835535d?w=1100",
-              "https://images.unsplash.com/photo-1604176354204-9268737828e4?w=1100",
-              "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=1100"
-            ]
-          },
-          {
-            title: "Light wash denim",
-            description: "Easy everyday denim with a relaxed vintage attitude.",
-            productInfo: "Suggested angle: light blue jeans, cropped denim, relaxed fit and wardrobe essentials.",
-            images: [
-              "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=1100",
-              "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=1100",
-              "https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=1100"
+              "https://images.unsplash.com/photo-1542272604-787c3835535d?w=900",
+              "https://images.unsplash.com/photo-1604176354204-9268737828e4?w=900",
+              "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=900"
             ]
           },
           {
             title: "Everyday blue",
-            description: "Simple denim silhouettes and wearable blue tones.",
-            productInfo: "Suggested angle: everyday outfits, washed denim, casual styling and wardrobe basics.",
+            description: "Quiet denim essentials with lived-in texture.",
+            info: "Light washes, relaxed fits and everyday styling.",
             images: [
-              "https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=1100",
-              "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=1100",
-              "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1100"
+              "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=900",
+              "https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=900",
+              "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Interiors",
-        kicker: "",
-        items: [
+        title: "Interiors",
+        products: [
           {
-            title: "Soft neutral bedroom",
-            description: "Soft textiles, warm neutrals and comfortable minimalism.",
-            productInfo: "Suggested angle: linen bedding, neutral lamps, sculptural objects, warm woods and textured cushions.",
+            title: "Neutral bedroom",
+            description: "Layered linen, soft woods and quiet comfort.",
+            info: "Bedding, lighting, textures and calm home details.",
             images: [
-              "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=1100",
-              "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=1100",
-              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1100"
+              "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=900",
+              "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=900",
+              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=900"
             ]
           },
           {
-            title: "Warm living room",
-            description: "Layered interior styling with natural materials.",
-            productInfo: "Suggested angle: wood furniture, neutral rugs, linen sofas, lamps and ceramic objects.",
+            title: "Living textures",
+            description: "Warm rooms built from natural materials.",
+            info: "Furniture, rugs, ceramic objects and soft lighting.",
             images: [
-              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1100",
-              "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=1100",
-              "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1100"
-            ]
-          },
-          {
-            title: "Minimal home objects",
-            description: "Quiet decor details, tactile materials and warm styling.",
-            productInfo: "Suggested angle: ceramics, lamps, shelves, neutral decoration and home accessories.",
-            images: [
-              "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1100",
-              "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=1100",
-              "https://images.unsplash.com/photo-1602872030490-4a484a7b3ba6?w=1100"
+              "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=900",
+              "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=900",
+              "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Design",
-        kicker: "",
-        items: [
+        title: "Design",
+        products: [
           {
-            title: "Minimal design object",
-            description: "Clean forms, strong silhouettes and refined objects.",
-            productInfo: "Suggested angle: decorative objects, furniture, lighting, ceramics and sculptural accessories.",
+            title: "Sculpted objects",
+            description: "Pieces with clean form and tactile presence.",
+            info: "Decorative objects, lighting and collectible design.",
             images: [
-              "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=1100",
-              "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=1100",
-              "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=1100"
+              "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900",
+              "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=900",
+              "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=900"
             ]
           },
           {
-            title: "Ceramic object",
-            description: "Sculptural ceramics and tactile objects.",
-            productInfo: "Suggested angle: ceramics, vases, home objects, handcrafted pieces and collectible design.",
+            title: "Crafted ceramic",
+            description: "Handmade surface and imperfect elegance.",
+            info: "Ceramics, vases and hand-crafted home pieces.",
             images: [
-              "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=1100",
-              "https://images.unsplash.com/photo-1602872030490-4a484a7b3ba6?w=1100",
-              "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=1100"
-            ]
-          },
-          {
-            title: "Design lighting",
-            description: "Lamps, shadows and sculptural light.",
-            productInfo: "Suggested angle: table lamps, floor lamps, ambient lighting and collectible furniture.",
-            images: [
-              "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=1100",
-              "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=1100",
-              "https://images.unsplash.com/photo-1540932239986-30128078f3c5?w=1100"
+              "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=900",
+              "https://images.unsplash.com/photo-1602872030490-4a484a7b3ba6?w=900",
+              "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Travel",
-        kicker: "",
-        items: [
+        title: "Travel",
+        products: [
           {
-            title: "Desert road trip",
-            description: "Open landscapes, soft light and travel inspiration.",
-            productInfo: "Suggested angle: road trips, boutique hotels, landscape inspiration and weekend guides.",
+            title: "Quiet escapes",
+            description: "Sunlit places, coastlines and distant roads.",
+            info: "Boutique stays, landscapes and weekend itineraries.",
             images: [
-              "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1100",
-              "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=1100",
-              "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1100"
+              "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900",
+              "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
+              "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=900"
             ]
           },
           {
-            title: "Quiet coastal mood",
-            description: "Sea, movement and quiet escapes.",
-            productInfo: "Suggested angle: coastal hotels, weekend escapes, travel notebooks and beach guides.",
+            title: "Architecture stay",
+            description: "Destinations shaped by design and light.",
+            info: "Design hotels, modern buildings and city walks.",
             images: [
-              "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1100",
-              "https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1100",
-              "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1100"
-            ]
-          },
-          {
-            title: "Architecture escape",
-            description: "Architectural travel references and city details.",
-            productInfo: "Suggested angle: boutique stays, architecture guides, city walks and design hotels.",
-            images: [
-              "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=1100",
-              "https://images.unsplash.com/photo-1494526585095-c41746248156?w=1100",
-              "https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1100"
+              "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=900",
+              "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900",
+              "https://images.unsplash.com/photo-1494526585095-c41746248156?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Food",
-        kicker: "",
-        items: [
+        title: "Food",
+        products: [
           {
-            title: "Table mood",
-            description: "Food, table styling and warm visual inspiration.",
-            productInfo: "Suggested angle: recipes, tableware, restaurant ideas, fruit, ceramics and gathering moments.",
+            title: "Table rituals",
+            description: "Beautiful meals, ceramics and warm gatherings.",
+            info: "Recipes, restaurants, tableware and seasonal food.",
             images: [
-              "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=1100",
-              "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=1100",
-              "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=1100"
+              "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=900",
+              "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=900",
+              "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=900"
             ]
           },
           {
-            title: "Fresh market color",
-            description: "Markets, ingredients and seasonal colors.",
-            productInfo: "Suggested angle: seasonal produce, recipes, food photography and table inspiration.",
+            title: "Market color",
+            description: "Seasonal ingredients and saturated moments.",
+            info: "Fresh produce, markets and recipe inspiration.",
             images: [
-              "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1100",
-              "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=1100",
-              "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=1100"
-            ]
-          },
-          {
-            title: "Breakfast table",
-            description: "Soft morning food inspiration.",
-            productInfo: "Suggested angle: breakfast recipes, ceramics, table styling and morning routines.",
-            images: [
-              "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=1100",
-              "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=1100",
-              "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=1100"
+              "https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=900",
+              "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=900",
+              "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Sneakers",
-        kicker: "",
-        items: [
+        title: "Sneakers",
+        products: [
           {
-            title: "Clean white sneaker",
-            description: "Minimal everyday sneakers with a soft product mood.",
-            productInfo: "Suggested angle: white sneakers, leather trainers, quiet casual styling and clean silhouettes.",
+            title: "Clean trainer",
+            description: "Minimal silhouettes for an everyday wardrobe.",
+            info: "Leather sneakers, neutral colorways and classic soles.",
             images: [
-              "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=1100",
-              "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=1100",
-              "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=1100"
+              "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=900",
+              "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=900",
+              "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=900"
             ]
           },
           {
-            title: "Retro running shoe",
-            description: "Sport-inspired footwear with vintage proportions.",
-            productInfo: "Suggested angle: retro runners, suede textures, soft colorways and casual styling.",
+            title: "Retro runner",
+            description: "Sport heritage softened for daily styling.",
+            info: "Retro runners, suede finishes and tonal palettes.",
             images: [
-              "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=1100",
-              "https://images.unsplash.com/photo-1543508282-6319a3e2621f?w=1100",
-              "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=1100"
-            ]
-          },
-          {
-            title: "Monochrome trainer",
-            description: "A graphic sneaker direction with simple contrast.",
-            productInfo: "Suggested angle: black-and-white trainers, streetwear basics and graphic soles.",
-            images: [
-              "https://images.unsplash.com/photo-1465453869711-7e174808ace9?w=1100",
-              "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=1100",
-              "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=1100"
+              "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900",
+              "https://images.unsplash.com/photo-1543508282-6319a3e2621f?w=900",
+              "https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Plants",
-        kicker: "",
-        items: [
+        title: "Plants",
+        products: [
           {
             title: "Indoor greenery",
-            description: "Soft plant styling for calm interiors.",
-            productInfo: "Suggested angle: indoor plants, ceramic pots, shelves, window light and calm home corners.",
+            description: "Soft leaves and quiet botanical corners.",
+            info: "Indoor plants, ceramic pots and natural-light styling.",
             images: [
-              "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=1100",
-              "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=1100",
-              "https://images.unsplash.com/photo-1525498128493-380d1990a112?w=1100"
+              "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=900",
+              "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=900",
+              "https://images.unsplash.com/photo-1525498128493-380d1990a112?w=900"
             ]
           },
           {
             title: "Plant shelf",
-            description: "Layered plant arrangements and natural textures.",
-            productInfo: "Suggested angle: plant shelves, ceramics, small pots, trailing plants and botanical decor.",
+            description: "Layered greenery and living decoration.",
+            info: "Trailing plants, shelf styling and botanical objects.",
             images: [
-              "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?w=1100",
-              "https://images.unsplash.com/photo-1493673272479-a20888bcee10?w=1100",
-              "https://images.unsplash.com/photo-1525498128493-380d1990a112?w=1100"
-            ]
-          },
-          {
-            title: "Botanical corner",
-            description: "A quiet plant-focused lifestyle mood.",
-            productInfo: "Suggested angle: green corners, natural light, ceramic planters and botanical accessories.",
-            images: [
-              "https://images.unsplash.com/photo-1493957988430-a5f2e15f39a3?w=1100",
-              "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=1100",
-              "https://images.unsplash.com/photo-1501004318641-b39e6451bec6?w=1100"
+              "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?w=900",
+              "https://images.unsplash.com/photo-1493673272479-a20888bcee10?w=900",
+              "https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=900"
             ]
           }
         ]
       },
-
       {
-        category: "Architecture",
-        kicker: "",
-        items: [
+        title: "Beauty",
+        products: [
           {
-            title: "Clean facade",
-            description: "Geometric architecture and quiet urban forms.",
-            productInfo: "Suggested angle: buildings, facades, minimal architecture and visual city references.",
+            title: "Vanity objects",
+            description: "Quiet rituals and beautifully shaped essentials.",
+            info: "Skincare, perfume bottles and bathroom styling.",
             images: [
-              "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=1100",
-              "https://images.unsplash.com/photo-1494526585095-c41746248156?w=1100",
-              "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=1100"
-            ]
-          },
-          {
-            title: "Minimal house",
-            description: "Warm architecture with graphic volumes.",
-            productInfo: "Suggested angle: minimal homes, exterior design, calm architecture and modern materials.",
-            images: [
-              "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1100",
-              "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1100",
-              "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=1100"
-            ]
-          },
-          {
-            title: "Interior architecture",
-            description: "Spatial details, light and structural lines.",
-            productInfo: "Suggested angle: architectural interiors, staircases, light wells and spatial inspiration.",
-            images: [
-              "https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=1100",
-              "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1100",
-              "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=1100"
-            ]
-          }
-        ]
-      },
-
-      {
-        category: "Vintage",
-        kicker: "",
-        items: [
-          {
-            title: "Vintage objects",
-            description: "Second-hand design details and nostalgic styling.",
-            productInfo: "Suggested angle: vintage decor, flea market finds, old books, ashtrays and collectible objects.",
-            images: [
-              "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1100",
-              "https://images.unsplash.com/photo-1514894780887-121968d00567?w=1100",
-              "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1100"
-            ]
-          },
-          {
-            title: "Flea market mood",
-            description: "Eclectic finds with a collected atmosphere.",
-            productInfo: "Suggested angle: vintage markets, rare finds, collectible design and nostalgic color palettes.",
-            images: [
-              "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=1100",
-              "https://images.unsplash.com/photo-1514894780887-121968d00567?w=1100",
-              "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=1100"
-            ]
-          },
-          {
-            title: "Old paper textures",
-            description: "A tactile world of paper, books and archives.",
-            productInfo: "Suggested angle: notebooks, prints, postcards, archives and vintage paper objects.",
-            images: [
-              "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=1100",
-              "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=1100",
-              "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=1100"
-            ]
-          }
-        ]
-      },
-
-      {
-        category: "Beauty",
-        kicker: "",
-        items: [
-          {
-            title: "Soft vanity mood",
-            description: "Beauty objects and quiet bathroom styling.",
-            productInfo: "Suggested angle: skincare, perfume bottles, bathroom shelves, soft lighting and daily rituals.",
-            images: [
-              "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1100",
-              "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1100",
-              "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=1100"
+              "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=900",
+              "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=900",
+              "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=900"
             ]
           },
           {
             title: "Skincare ritual",
-            description: "Clean beauty textures and calm self-care references.",
-            productInfo: "Suggested angle: skincare routines, minimal packaging, bathroom shelves and soft textures.",
+            description: "Minimal packaging and sensorial textures.",
+            info: "Skincare routines, cleansers and daily rituals.",
             images: [
-              "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=1100",
-              "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1100",
-              "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1100"
+              "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=900",
+              "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=900",
+              "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=900"
+            ]
+          }
+        ]
+      },
+      {
+        title: "Vintage",
+        products: [
+          {
+            title: "Collected finds",
+            description: "Objects with patina, memory and character.",
+            info: "Vintage décor, archives and flea-market pieces.",
+            images: [
+              "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=900",
+              "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=900",
+              "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900"
             ]
           },
           {
-            title: "Makeup color",
-            description: "Color palettes, powders and beauty inspiration.",
-            productInfo: "Suggested angle: makeup palettes, soft color ranges, lip colors and beauty photography.",
+            title: "Paper archive",
+            description: "Faded pages and tactile historical fragments.",
+            info: "Postcards, archival papers and old editions.",
             images: [
-              "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1100",
-              "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=1100",
-              "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=1100"
+              "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=900",
+              "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=900",
+              "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=900"
+            ]
+          }
+        ]
+      },
+      {
+        title: "Architecture",
+        products: [
+          {
+            title: "Clean facade",
+            description: "Geometry, stillness and modern urban lines.",
+            info: "Architecture, facades and graphic city references.",
+            images: [
+              "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=900",
+              "https://images.unsplash.com/photo-1494526585095-c41746248156?w=900",
+              "https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=900"
+            ]
+          },
+          {
+            title: "Interior volumes",
+            description: "Spaces composed through structure and light.",
+            info: "Spatial design, staircases and interior architecture.",
+            images: [
+              "https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=900",
+              "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=900",
+              "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=900"
             ]
           }
         ]
       }
     ];
 
-    let flatItems = [];
+    const board = document.getElementById("board");
+
+    function makeDots(number) {
+      return Array.from({ length: number }, (_, index) =>
+        `<span class="${index === 0 ? "current" : ""}"></span>`
+      ).join("");
+    }
 
     function renderBoard() {
-      const board = document.getElementById("board");
-      board.innerHTML = "";
-      flatItems = [];
+      board.innerHTML = categories.map((category, categoryIndex) => `
+        <section class="category-lane">
+          <div class="lane-title">
+            <h2>${category.title}</h2>
+            <span>${String(categoryIndex + 1).padStart(2, "0")}</span>
+          </div>
 
-      columns.forEach((column, columnIndex) => {
-        board.innerHTML += `
-          <section class="category-column">
-            <div class="column-header">
-              <div class="column-kicker">${column.kicker}</div>
-              <h2 class="column-title">${column.category}</h2>
-            </div>
-            <div class="column-feed" id="column-${columnIndex}"></div>
-          </section>
-        `;
+          <div class="card-list">
+            ${category.products.map((product, productIndex) => `
+              <article class="card ${productIndex === 1 ? "secondary" : ""}">
+                <div class="media">
+                  <div class="slides"
+                       id="slides-${categoryIndex}-${productIndex}"
+                       onscroll="updateDots(${categoryIndex}, ${productIndex})">
+                    ${product.images.map(image => `
+                      <div class="slide">
+                        <img src="${image}" alt="${product.title}">
+                      </div>
+                    `).join("")}
+                  </div>
 
-        column.items.forEach((item, itemIndex) => {
-          flatItems.push({
-            ...item,
-            category: column.category,
-            columnIndex,
-            itemIndex
-          });
-        });
-      });
+                  <button class="image-arrow left"
+                          onclick="shiftImage(event, ${categoryIndex}, ${productIndex}, -1)"
+                          aria-label="Previous image">‹</button>
 
-      columns.forEach((column, columnIndex) => {
-        const feed = document.getElementById(`column-${columnIndex}`);
-        column.items.forEach((item, itemIndex) => {
-          const globalIndex = flatItems.findIndex(
-            flatItem => flatItem.columnIndex === columnIndex && flatItem.itemIndex === itemIndex
-          );
-          feed.innerHTML += createCard(item, column.category, globalIndex, itemIndex);
-        });
-      });
+                  <button class="image-arrow right"
+                          onclick="shiftImage(event, ${categoryIndex}, ${productIndex}, 1)"
+                          aria-label="Next image">›</button>
 
-      updatePositionIndicator();
-    }
+                  <div id="pagination-${categoryIndex}-${productIndex}" class="pagination">
+                    ${makeDots(product.images.length)}
+                  </div>
+                </div>
 
-    function createCard(item, category, globalIndex, itemIndex) {
-      const sizeClass = itemIndex % 3 === 0 ? "tall" : itemIndex % 3 === 2 ? "small" : "";
-      const slides = item.images.map((img, imgIndex) => `
-        <div class="visual-slide">
-          <img src="${img}" alt="">
-          <div class="image-counter">${imgIndex + 1} / ${item.images.length}</div>
-        </div>
+                <div class="card-info">
+                  <div class="label">${category.title}</div>
+                  <h3>${product.title}</h3>
+                  <p>${product.description}</p>
+
+                  <button class="details-link"
+                          onclick="openDetail(${categoryIndex}, ${productIndex})">
+                    View details
+                  </button>
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        </section>
       `).join("");
-
-      return `
-        <article class="card ${sizeClass}">
-          <div class="visual-carousel">
-            ${slides}
-          </div>
-
-          <div class="card-content" onclick="openModal(${globalIndex})">
-            <div class="tag">${category}</div>
-            <h3 class="card-title">${item.title}</h3>
-            <p class="card-text">${item.description}</p>
-            <div class="hint">Scroll image sideways. Click text for details.</div>
-          </div>
-        </article>
-      `;
     }
 
-    function scrollBoard(direction) {
-      const board = document.getElementById("board");
-      const column = document.querySelector(".category-column");
-      const gap = 18;
-      const amount = column.offsetWidth + gap;
+    function shiftImage(event, categoryIndex, productIndex, direction) {
+      event.stopPropagation();
 
-      board.scrollBy({
-        left: direction * amount * 4,
+      const slides = document.getElementById(`slides-${categoryIndex}-${productIndex}`);
+
+      slides.scrollBy({
+        left: direction * slides.clientWidth,
         behavior: "smooth"
       });
-
-      setTimeout(updatePositionIndicator, 350);
     }
 
-    function updatePositionIndicator() {
-      const board = document.getElementById("board");
-      const column = document.querySelector(".category-column");
-      const indicator = document.getElementById("positionIndicator");
+    function updateDots(categoryIndex, productIndex) {
+      const slides = document.getElementById(`slides-${categoryIndex}-${productIndex}`);
+      const markers = document.querySelectorAll(`#pagination-${categoryIndex}-${productIndex} span`);
+      const current = Math.round(slides.scrollLeft / slides.clientWidth);
 
-      if (!column) return;
+      markers.forEach((marker, index) => {
+        marker.classList.toggle("current", index === current);
+      });
+    }
 
-      const gap = 18;
-      const columnWidth = column.offsetWidth + gap;
-      const firstVisible = Math.floor(board.scrollLeft / columnWidth) + 1;
+    function updatePosition() {
+      const lane = board.querySelector(".category-lane");
 
-      const visibleCount = Math.min(
-        10,
-        Math.max(1, Math.round(board.clientWidth / columnWidth))
+      if (!lane) return;
+
+      const gap = parseFloat(getComputedStyle(board).gap);
+      const current = Math.min(
+        categories.length - 1,
+        Math.max(0, Math.round(board.scrollLeft / (lane.offsetWidth + gap)))
       );
 
-      const lastVisible = Math.min(columns.length, firstVisible + visibleCount - 1);
-
-      indicator.innerText = `Columns ${firstVisible}–${lastVisible}`;
+      document.getElementById("position").textContent =
+        `${String(current + 1).padStart(2, "0")} / ${String(categories.length).padStart(2, "0")}`;
     }
 
-    function openModal(globalIndex) {
-      const item = flatItems[globalIndex];
+    function openDetail(categoryIndex, productIndex) {
+      const category = categories[categoryIndex];
+      const product = category.products[productIndex];
 
-      document.getElementById("modalCategory").innerText = item.category;
-      document.getElementById("modalTitle").innerText = item.title;
-      document.getElementById("modalDescription").innerText = item.description;
-      document.getElementById("modalReason").innerText = "You are receiving this recommendation because you uploaded this screenshot and it appears visually connected to this category, mood or product universe.";
-      document.getElementById("modalProductInfo").innerText = item.productInfo;
+      document.getElementById("detailCategory").textContent = category.title;
+      document.getElementById("detailTitle").textContent = product.title;
+      document.getElementById("detailDescription").textContent = product.description;
 
-      const modalCarousel = document.getElementById("modalCarousel");
-      modalCarousel.innerHTML = item.images.map(img => `<img src="${img}" alt="">`).join("");
+      document.getElementById("detailReason").textContent =
+        "You are receiving this recommendation because you uploaded a screenshot with visual cues linked to this mood, object or category.";
 
-      const screenshotRow = document.getElementById("screenshotRow");
-      screenshotRow.innerHTML = "";
+      document.getElementById("detailInfo").textContent = product.info;
 
-      if (uploadedScreenshots.length === 0) {
-        screenshotRow.innerHTML = `
-          <div class="empty-screenshots">
-            No uploaded screenshots found yet. Create a folder called <strong>uploaded_screenshots</strong> on your Desktop, add the screenshots inside it, then rerun the notebook.
-          </div>
-        `;
-      } else {
-        uploadedScreenshots.forEach((screenshot, index) => {
-          screenshotRow.innerHTML += `
-            <div class="screenshot-card">
-              <img src="${screenshot.src}" alt="Uploaded screenshot ${index + 1}">
-              <div>Uploaded screenshot ${index + 1}</div>
-            </div>
-          `;
-        });
-      }
+      document.getElementById("detailGallery").innerHTML =
+        product.images
+          .map(image => `<img src="${image}" alt="${product.title}">`)
+          .join("");
 
-      document.getElementById("modalOverlay").style.display = "flex";
+      document.getElementById("screenshots").innerHTML =
+        uploadedScreenshots
+          .map(screenshot => `
+            <figure class="screenshot">
+              <img src="${screenshot.src}" alt="${screenshot.label}">
+              <figcaption>${screenshot.label}</figcaption>
+            </figure>
+          `)
+          .join("");
+
+      document.getElementById("overlay").classList.add("visible");
     }
 
-    function closeModal() {
-      document.getElementById("modalOverlay").style.display = "none";
+    function closeDetail() {
+      document.getElementById("overlay").classList.remove("visible");
     }
 
-    function closeModalOutside(event) {
-      if (event.target.id === "modalOverlay") {
-        closeModal();
+    function closeFromBackdrop(event) {
+      if (event.target.id === "overlay") {
+        closeDetail();
       }
     }
 
-    document.addEventListener("keydown", function(event) {
-      if (event.key === "ArrowRight") {
-        scrollBoard(1);
-      }
+    board.addEventListener("scroll", updatePosition);
 
-      if (event.key === "ArrowLeft") {
-        scrollBoard(-1);
-      }
-
+    document.addEventListener("keydown", event => {
       if (event.key === "Escape") {
-        closeModal();
+        closeDetail();
       }
     });
 
-    document.getElementById("board").addEventListener("scroll", updatePositionIndicator);
-
     renderBoard();
+    updatePosition();
   </script>
 </body>
 </html>
