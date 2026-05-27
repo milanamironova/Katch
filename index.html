@@ -15,92 +15,54 @@
   --background: #FFEEED;
   --header-height: 120px;
   --nav-height: 65px;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-body, button {
-  font-family: 'Proxima Nova','Barlow Condensed', sans-serif;
-  margin: 0; padding: 0; box-sizing: border-box;
-  background: var(--background); color: var(--text);
-}
-
+body, button { font-family: 'Proxima Nova','Barlow Condensed', sans-serif; margin:0; padding:0; background: var(--background); color: var(--text);}
 h1,h2,h3,h4,h5,h6 { font-family: 'Barlow Condensed','Proxima Nova', Georgia, serif; }
-
-.app { position: fixed; inset:0; background: var(--background); overflow:hidden; }
-
-.header {
-  position:absolute; left:0; right:0; top:0;
-  height: calc(var(--header-height)+var(--safe-top));
-  padding: calc(16px + var(--safe-top)) 10px 10px;
-  background: var(--background);
-  border-bottom: 1px solid var(--secondary);
-}
-
-.brand h1 { font-size: 28px; color: var(--primary); }
-.brand p { font-size: 11px; color: var(--secondary); margin-top:3px; text-transform:uppercase; letter-spacing:0.12em;}
+.app { position: fixed; inset:0; overflow:hidden; }
+.header { position:absolute; left:0; right:0; top:0; height: calc(var(--header-height)); padding:10px; background: var(--background); border-bottom: 1px solid var(--secondary);}
+.brand h1 { font-size:28px; color: var(--primary);}
+.brand p { font-size:11px; color: var(--secondary); margin-top:3px; text-transform:uppercase; letter-spacing:0.12em;}
 
 .category-board {
-  position:absolute;
-  top: calc(var(--header-height)+var(--safe-top));
-  bottom: calc(var(--nav-height)+var(--safe-bottom));
-  left:0; right:0;
-  display:flex;
-  gap:10px;
-  overflow-x:auto;
-  padding:8px 10px;
-  scroll-snap-type: x mandatory;
+  position:absolute; top:calc(var(--header-height)); bottom:calc(var(--nav-height)); left:0; right:0;
+  display:flex; gap:8px; overflow-x:auto; padding:8px; scroll-snap-type: x mandatory;
 }
 
-.category-lane {
-  flex:0 0 calc(33vw - 10px);
-  max-width:180px;
-  scroll-snap-align:start;
-  display:flex;
-  flex-direction:column;
-}
+.category-lane { flex:0 0 calc(25vw - 8px); max-width:150px; scroll-snap-align:start; display:flex; flex-direction:column; }
+.lane-title h2 { font-size:14px; margin:0; color: var(--text); }
 
-.lane-title h2 { font-size:16px; color: var(--text); margin:0; }
-.card { background:#fff; border-radius:10px; margin-bottom:10px; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+.card { background:#fff; border-radius:10px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.08);}
 .slides { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; }
 .slide { flex:0 0 100%; scroll-snap-align:start; }
-.slide img { width:100%; height:110px; object-fit:cover; border-radius:6px; }
+.slide img { width:100%; height:100px; object-fit:cover; border-radius:6px; }
+.card-info h3 { font-size:12px; margin:3px 0 1px; }
+.card-info p { font-size:10px; color: var(--secondary); margin:0 0 4px; }
+.card-info .details-link { font-size:10px; color: var(--primary); text-decoration:underline; cursor:pointer; }
 
-.card-info h3 { font-size:13px; margin:4px 0 2px; }
-.card-info p { font-size:11px; color: var(--secondary); margin:0 0 5px; }
-.card-info .details-link { font-size:11px; color: var(--primary); text-decoration:underline; cursor:pointer; }
-
-.nav {
-  position:absolute; bottom:0; left:0; right:0;
-  height: var(--nav-height);
-  display:flex; justify-content:space-evenly; align-items:center;
-  border-top:1px solid var(--secondary); background: var(--background);
-}
-
-.nav-button { display:flex; flex-direction:column; align-items:center; font-size:12px; color: var(--secondary); }
+.nav { position:absolute; bottom:0; left:0; right:0; height: var(--nav-height); display:flex; justify-content:space-evenly; align-items:center; border-top:1px solid var(--secondary); background: var(--background);}
+.nav-button { display:flex; flex-direction:column; align-items:center; font-size:12px; color: var(--secondary);}
 .nav-button.active { color: var(--text); }
 
-.overlay { display:none; position:absolute; inset:0; background: rgba(0,0,0,.4); justify-content:flex-end; align-items:flex-end; }
+.overlay { display:none; position:absolute; inset:0; background: rgba(0,0,0,.4); justify-content:flex-end; align-items:flex-end;}
 .overlay.visible { display:flex; }
-.detail-sheet { width:100%; max-height:90%; background:#fff; border-radius:20px 20px 0 0; overflow-y:auto; padding:8px; }
-.detail-gallery img { width:100%; height:150px; object-fit:cover; border-radius:6px; margin-bottom:4px; }
-.detail-copy h3 { font-size:16px; margin:3px 0; color: var(--text);}
+.detail-sheet { width:100%; max-height:90%; background:#fff; border-radius:20px 20px 0 0; overflow-y:auto; padding:8px;}
+.detail-gallery img { width:100%; height:150px; object-fit:cover; border-radius:6px; margin-bottom:4px;}
+.detail-copy h3 { font-size:14px; margin:3px 0; color: var(--text);}
 .detail-copy p { font-size:11px; color: var(--secondary);}
 .screenshots img { width:90px; height:60px; object-fit:cover; border-radius:4px; margin-right:4px;}
 
 @media (min-width:600px){
   body{display:grid; place-items:center; background:#e4dfd7;}
   .app{width:430px; height:min(930px,calc(100vh-34px)); border-radius:38px; border:9px solid #171512;}
-  .category-lane{flex-basis:120px; max-width:120px;}
-  .slide img{height:90px;}
+  .category-lane{flex-basis:100px; max-width:100px;}
+  .slide img{height:80px;}
 }
 </style>
 </head>
 <body>
 <div class="app">
-<header class="header">
-<div class="brand"><h1>Katch</h1><p>Discover the hidden</p></div>
-</header>
+<header class="header"><div class="brand"><h1>Katch</h1><p>Discover the hidden</p></div></header>
 
 <main class="category-board" id="board"></main>
 
@@ -117,30 +79,50 @@ h1,h2,h3,h4,h5,h6 { font-family: 'Barlow Condensed','Proxima Nova', Georgia, ser
   <div class="detail-copy">
     <h3 id="detailTitle"></h3>
     <p id="detailDescription"></p>
-    <div class="screenshots" id="screenshots"></div>
+    <div class="screenshots" id="screenshots"><img src="data:image/png;base64,INSERT_BASE64_IMAGE_HERE" alt="Uploaded screenshot"></div>
   </div>
 </div>
 </div>
 </div>
 
 <script>
-const uploadedScreenshots = [
-  {"src":"https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900","label":"Uploaded screenshot"}
-];
+const uploadedScreenshots=[{src:"data:image/png;base64,INSERT_BASE64_IMAGE_HERE",label:"Uploaded screenshot"}];
 
-const categories = [
-  {"title":"Books","products":[
-    {"title":"Collected volumes","description":"Art editions and literary objects","images":["https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900"]},
-    {"title":"Reading corner","description":"Warm rooms with books","images":["https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900"]}
-  ]},
-  {"title":"Arts","products":[
-    {"title":"Gallery palette","description":"Color, composition","images":["https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900"]}
-  ]}
+const categories=[
+  {title:"Books",products:[{title:"Collected volumes",description:"Art editions and literary objects",images:["https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900"]},{title:"Reading corner",description:"Warm rooms with books",images:["https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900"]}]},
+  {title:"Arts",products:[{title:"Gallery palette",description:"Color, composition",images:["https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900"]}]},
+  {title:"Denim",products:[{title:"Vintage wash",description:"Relaxed shapes",images:["https://images.unsplash.com/photo-1542272604-787c3835535d?w=900"]}]},
+  {title:"Interiors",products:[{title:"Neutral bedroom",description:"Layered linen and soft woods",images:["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=900"]}]},
+  {title:"Design",products:[{title:"Sculpted objects",description:"Pieces with clean form",images:["https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900"]}]},
+  {title:"Travel",products:[{title:"Quiet escapes",description:"Sunlit places and coastlines",images:["https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900"]}]},
+  {title:"Food",products:[{title:"Table rituals",description:"Beautiful meals and warm gatherings",images:["https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?w=900"]}]},
+  {title:"Sneakers",products:[{title:"Clean trainer",description:"Minimal silhouettes",images:["https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=900"]}]},
+  {title:"Plants",products:[{title:"Indoor greenery",description:"Soft leaves and botanical corners",images:["https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=900"]}]},
+  {title:"Beauty",products:[{title:"Vanity objects",description:"Quiet rituals and essentials",images:["https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=900"]}]}
 ];
 
 const board=document.getElementById("board");
-function renderBoard(){board.innerHTML=categories.map((cat,catIdx)=>`<section class="category-lane"><div class="lane-title"><h2>${cat.title}</h2></div><div class="card-list">${cat.products.map((p,idx)=>`<div class="card" onclick="openDetail(${catIdx},${idx})"><div class="slides">${p.images.map(img=>`<div class="slide"><img src="${img}"></div>`).join("")}</div><div class="card-info"><h3>${p.title}</h3><p>${p.description}</p></div></div>`).join("")}</div></section>`).join("");}
-function openDetail(catIdx,prodIdx){const prod=categories[catIdx].products[prodIdx];document.getElementById("detailGallery").innerHTML=prod.images.map(img=>`<img src="${img}">`).join("");document.getElementById("detailTitle").textContent=prod.title;document.getElementById("detailDescription").textContent=prod.description;document.getElementById("screenshots").innerHTML=uploadedScreenshots.map(s=>`<img src="${s.src}" alt="${s.label}">`).join("");document.getElementById("overlay").classList.add("visible");}
+
+function renderBoard(){board.innerHTML=categories.map((cat,catIdx)=>`
+<section class="category-lane">
+<div class="lane-title"><h2>${cat.title}</h2></div>
+<div class="card-list">
+${cat.products.map((p,idx)=>`
+<div class="card" onclick="openDetail(${catIdx},${idx})">
+<div class="slides">${p.images.map(img=>`<div class="slide"><img src="${img}"></div>`).join('')}</div>
+<div class="card-info"><h3>${p.title}</h3><p>${p.description}</p></div>
+</div>`).join('')}
+</div>
+</section>`).join('');}
+
+function openDetail(catIdx,prodIdx){{
+  const prod=categories[catIdx].products[prodIdx];
+  document.getElementById("detailGallery").innerHTML=prod.images.map(img=>`<img src="${img}">`).join("");
+  document.getElementById("detailTitle").textContent=prod.title;
+  document.getElementById("detailDescription").textContent=prod.description;
+  document.getElementById("overlay").classList.add("visible");
+}}
+
 renderBoard();
 </script>
 </body>
