@@ -15,47 +15,92 @@
   --background: #FFEEED;
   --header-height: 120px;
   --nav-height: 65px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-body, button { font-family: 'Proxima Nova','Barlow Condensed', sans-serif; margin:0; padding:0; background: var(--background); color: var(--text);}
+body, button {
+  font-family: 'Proxima Nova','Barlow Condensed', sans-serif;
+  margin: 0; padding: 0; box-sizing: border-box;
+  background: var(--background); color: var(--text);
+}
+
 h1,h2,h3,h4,h5,h6 { font-family: 'Barlow Condensed','Proxima Nova', Georgia, serif; }
-.app { position: fixed; inset:0; overflow:hidden; }
-.header { position:absolute; left:0; right:0; top:0; height: calc(var(--header-height)); padding:10px; background: var(--background); border-bottom: 1px solid var(--secondary);}
-.brand h1 { font-size:28px; color: var(--primary);}
-.brand p { font-size:11px; color: var(--secondary); margin-top:3px; text-transform:uppercase; letter-spacing:0.12em;}
+
+.app { position: fixed; inset:0; background: var(--background); overflow:hidden; }
+
+.header {
+  position:absolute; left:0; right:0; top:0;
+  height: calc(var(--header-height)+var(--safe-top));
+  padding: calc(16px + var(--safe-top)) 10px 10px;
+  background: var(--background);
+  border-bottom: 1px solid var(--secondary);
+}
+
+.brand h1 { font-size: 28px; color: var(--primary); }
+.brand p { font-size: 11px; color: var(--secondary); margin-top:3px; text-transform:uppercase; letter-spacing:0.12em;}
 
 .category-board {
-  position:absolute; top:calc(var(--header-height)); bottom:calc(var(--nav-height)); left:0; right:0;
-  display:flex; gap:8px; overflow-x:auto; padding:8px; scroll-snap-type: x mandatory;
+  position:absolute;
+  top: calc(var(--header-height)+var(--safe-top));
+  bottom: calc(var(--nav-height)+var(--safe-bottom));
+  left:0; right:0;
+  display:flex;
+  gap:10px;
+  overflow-x:auto;
+  padding:8px 10px;
+  scroll-snap-type: x mandatory;
 }
 
-.category-lane { flex:0 0 calc(25vw - 8px); max-width:150px; scroll-snap-align:start; display:flex; flex-direction:column; overflow-y:auto; }
-.lane-title h2 { font-size:14px; margin:0; color: var(--text); }
+.category-lane {
+  flex:0 0 calc(33vw - 10px);
+  max-width:180px;
+  scroll-snap-align:start;
+  display:flex;
+  flex-direction:column;
+}
 
-.card { background:#fff; border-radius:10px; margin-bottom:8px; box-shadow:0 2px 6px rgba(0,0,0,0.08);}
+.lane-title h2 { font-size:16px; color: var(--text); margin:0; }
+.card { background:#fff; border-radius:10px; margin-bottom:10px; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
 .slides { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; }
 .slide { flex:0 0 100%; scroll-snap-align:start; }
-.slide img { width:100%; height:90px; object-fit:cover; border-radius:6px; }
-.card-info h3 { font-size:12px; margin:3px 0 1px; }
-.card-info p { font-size:10px; color: var(--secondary); margin:0 0 4px; }
-.card-info .details-link { font-size:10px; color: var(--primary); text-decoration:underline; cursor:pointer; }
+.slide img { width:100%; height:110px; object-fit:cover; border-radius:6px; }
 
-.nav { position:absolute; bottom:0; left:0; right:0; height: var(--nav-height); display:flex; justify-content:space-evenly; align-items:center; border-top:1px solid var(--secondary); background: var(--background);}
-.nav-button { display:flex; flex-direction:column; align-items:center; font-size:12px; color: var(--secondary);}
+.card-info h3 { font-size:13px; margin:4px 0 2px; }
+.card-info p { font-size:11px; color: var(--secondary); margin:0 0 5px; }
+.card-info .details-link { font-size:11px; color: var(--primary); text-decoration:underline; cursor:pointer; }
+
+.nav {
+  position:absolute; bottom:0; left:0; right:0;
+  height: var(--nav-height);
+  display:flex; justify-content:space-evenly; align-items:center;
+  border-top:1px solid var(--secondary); background: var(--background);
+}
+
+.nav-button { display:flex; flex-direction:column; align-items:center; font-size:12px; color: var(--secondary); }
 .nav-button.active { color: var(--text); }
 
-.overlay { display:none; position:absolute; inset:0; background: rgba(0,0,0,.4); justify-content:flex-end; align-items:flex-end;}
+.overlay { display:none; position:absolute; inset:0; background: rgba(0,0,0,.4); justify-content:flex-end; align-items:flex-end; }
 .overlay.visible { display:flex; }
-.detail-sheet { width:100%; max-height:90%; background:#fff; border-radius:20px 20px 0 0; overflow-y:auto; padding:8px;}
-.detail-gallery img { width:100%; height:150px; object-fit:cover; border-radius:6px; margin-bottom:4px;}
-.detail-copy h3 { font-size:14px; margin:3px 0; color: var(--text);}
+.detail-sheet { width:100%; max-height:90%; background:#fff; border-radius:20px 20px 0 0; overflow-y:auto; padding:8px; }
+.detail-gallery img { width:100%; height:150px; object-fit:cover; border-radius:6px; margin-bottom:4px; }
+.detail-copy h3 { font-size:16px; margin:3px 0; color: var(--text);}
 .detail-copy p { font-size:11px; color: var(--secondary);}
 .screenshots img { width:90px; height:60px; object-fit:cover; border-radius:4px; margin-right:4px;}
+
+@media (min-width:600px){
+  body{display:grid; place-items:center; background:#e4dfd7;}
+  .app{width:430px; height:min(930px,calc(100vh-34px)); border-radius:38px; border:9px solid #171512;}
+  .category-lane{flex-basis:120px; max-width:120px;}
+  .slide img{height:90px;}
+}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="header"><div class="brand"><h1>Katch</h1><p>Discover the hidden</p></div></header>
+<header class="header">
+<div class="brand"><h1>Katch</h1><p>Discover the hidden</p></div>
+</header>
 
 <main class="category-board" id="board"></main>
 
@@ -79,75 +124,23 @@ h1,h2,h3,h4,h5,h6 { font-family: 'Barlow Condensed','Proxima Nova', Georgia, ser
 </div>
 
 <script>
-const uploadedScreenshots = []; // Empty, user said not to include
+const uploadedScreenshots = [
+  {"src":"https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900","label":"Uploaded screenshot"}
+];
 
 const categories = [
-  {title:"Books", products:[
-    {title:"Collected volumes", description:"Art editions and literary objects", images:[
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900",
-      "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=900",
-      "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=900",
-      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=900",
-      "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=900",
-      "https://images.unsplash.com/photo-1509021436665-8f07dbf5bf1d?w=900",
-      "https://images.unsplash.com/photo-1504198453319-5ce911bafcde?w=900",
-      "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=900"
-    ]}
+  {"title":"Books","products":[
+    {"title":"Collected volumes","description":"Art editions and literary objects","images":["https://images.unsplash.com/photo-1512820790803-83ca734da794?w=900"]},
+    {"title":"Reading corner","description":"Warm rooms with books","images":["https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=900"]}
   ]},
-  {title:"Arts", products:[
-    {title:"Gallery palette", description:"Color, composition", images:[
-      "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900",
-      "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=900",
-      "https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=900",
-      "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=900",
-      "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900",
-      "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=900",
-      "https://images.unsplash.com/photo-1513506003901-1e6a229e2d15?w=900",
-      "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?w=900"
-    ]}
-  ]},
-  {title:"Denim", products:[
-    {title:"Vintage wash", description:"Relaxed shapes", images:[
-      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=900",
-      "https://images.unsplash.com/photo-1604176354204-9268737828e4?w=900",
-      "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=900",
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=900",
-      "https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=900",
-      "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=900",
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=900",
-      "https://images.unsplash.com/photo-1543508282-6319a3e2621f?w=900"
-    ]}
+  {"title":"Arts","products":[
+    {"title":"Gallery palette","description":"Color, composition","images":["https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=900"]}
   ]}
-  // Add other categories similarly...
 ];
 
 const board=document.getElementById("board");
-
-function renderBoard(){
-  board.innerHTML = categories.map((cat, catIdx)=>`
-    <section class="category-lane">
-      <div class="lane-title"><h2>${cat.title}</h2></div>
-      <div class="card-list">
-        ${cat.products.map((prod, prodIdx)=>`
-          <div class="card" onclick="openDetail(${catIdx},${prodIdx})">
-            <div class="slides">
-              ${prod.images.map(img=>`<div class="slide"><img src="${img}"></div>`).join('')}
-            </div>
-            <div class="card-info"><h3>${prod.title}</h3><p>${prod.description}</p></div>
-          </div>`).join('')}
-      </div>
-    </section>`).join('');
-}
-
-function openDetail(catIdx, prodIdx){
-  const prod = categories[catIdx].products[prodIdx];
-  document.getElementById("detailGallery").innerHTML = prod.images.map(img=>`<img src="${img}">`).join('');
-  document.getElementById("detailTitle").textContent = prod.title;
-  document.getElementById("detailDescription").textContent = prod.description;
-  document.getElementById("screenshots").innerHTML = uploadedScreenshots.map(s=>`<img src="${s.src}" alt="${s.label}">`).join('');
-  document.getElementById("overlay").classList.add("visible");
-}
-
+function renderBoard(){board.innerHTML=categories.map((cat,catIdx)=>`<section class="category-lane"><div class="lane-title"><h2>${cat.title}</h2></div><div class="card-list">${cat.products.map((p,idx)=>`<div class="card" onclick="openDetail(${catIdx},${idx})"><div class="slides">${p.images.map(img=>`<div class="slide"><img src="${img}"></div>`).join("")}</div><div class="card-info"><h3>${p.title}</h3><p>${p.description}</p></div></div>`).join("")}</div></section>`).join("");}
+function openDetail(catIdx,prodIdx){const prod=categories[catIdx].products[prodIdx];document.getElementById("detailGallery").innerHTML=prod.images.map(img=>`<img src="${img}">`).join("");document.getElementById("detailTitle").textContent=prod.title;document.getElementById("detailDescription").textContent=prod.description;document.getElementById("screenshots").innerHTML=uploadedScreenshots.map(s=>`<img src="${s.src}" alt="${s.label}">`).join("");document.getElementById("overlay").classList.add("visible");}
 renderBoard();
 </script>
 </body>
